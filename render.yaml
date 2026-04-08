@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: deepflow-webhook-bridge
+    runtime: node
+    plan: free
+    buildCommand: npm ci --omit=dev
+    startCommand: node server.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: WEBHOOK_SECRET
+        sync: false
+      - key: DEEPFLOW_WEBHOOK_URL
+        sync: false
+      - key: PUBLIC_BASE_URL
+        sync: false

@@ -52,16 +52,32 @@ npm run test-push
 | `DEEPFLOW_WEBHOOK_URL` | DeepFlow template-webhook endpoint |
 | `PUBLIC_BASE_URL` | Public URL for this server (ngrok) — needed for DeepFlow to download event data |
 
+## Deploy to Render
+
+1. Go to [render.com](https://render.com) → **New** → **Web Service**
+2. Connect your GitHub repo (`danijelvukovic-servalit/deepflow-webhook-test`)
+3. Render auto-detects `render.yaml` — confirm settings
+4. Set environment variables:
+   - `PUBLIC_BASE_URL` = your Render URL (e.g. `https://deepflow-webhook-bridge.onrender.com`)
+   - `WEBHOOK_SECRET` = generate with `npm run generate-secret`
+   - `DEEPFLOW_WEBHOOK_URL` = your DeepFlow template-webhook URL
+5. Deploy
+
+Or use the Dockerfile:
+```bash
+docker build -t deepflow-webhook-bridge .
+docker run -p 3000:3000 --env-file .env deepflow-webhook-bridge
+```
+
 ## Connecting to GitHub
 
 1. Generate a secret: `npm run generate-secret`
-2. Expose the server: `ngrok http 3000`
-3. In your GitHub repo → Settings → Webhooks → Add webhook:
-   - **Payload URL**: `https://your-ngrok-url.ngrok.io/webhook`
+2. In your GitHub repo → Settings → Webhooks → Add webhook:
+   - **Payload URL**: `https://your-render-url.onrender.com/webhook`
    - **Content type**: `application/json`
-   - **Secret**: same as `.env`
+   - **Secret**: same as your env var
    - **Events**: Pull requests
-4. The server will process PR events and attempt to forward to DeepFlow
+3. The server will process PR events and forward to DeepFlow
 
 ## API Endpoints
 
@@ -82,6 +98,8 @@ npm run test-push
 ├── deepflow-client.js   # DeepFlow API client — event mapping + forwarding
 ├── test-webhook.js      # Test script — simulates GitHub PR lifecycle
 ├── GAPS.md              # Product gap analysis for the client
+├── Dockerfile           # Docker image for deployment
+├── render.yaml          # Render.com auto-deploy config
 ├── .env.example         # Configuration template
 └── logs/                # Received events + event data (gitignored)
 ```

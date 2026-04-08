@@ -294,18 +294,21 @@ app.post("/webhook", async (req, res) => {
   res.status(200).json(buildResponse(event, action, delivery, mapping));
 });
 
-app.listen(PORT, () => {
+app.listen(PORT, "0.0.0.0", () => {
+  const publicUrl = process.env.PUBLIC_BASE_URL;
+  const base = publicUrl || `http://localhost:${PORT}`;
   console.log(`\n🚀 GitHub → DeepFlow Webhook Bridge`);
   console.log(`   Port:       ${PORT}`);
-  console.log(`   Webhook:    http://localhost:${PORT}/webhook`);
-  console.log(`   Dashboard:  http://localhost:${PORT}/`);
-  console.log(`   Events:     http://localhost:${PORT}/events`);
-  console.log(`   DF Results: http://localhost:${PORT}/deepflow-results`);
+  console.log(`   Env:        ${process.env.NODE_ENV || "development"}`);
+  console.log(`   Webhook:    ${base}/webhook`);
+  console.log(`   Dashboard:  ${base}/`);
+  console.log(`   Events:     ${base}/events`);
+  console.log(`   DF Results: ${base}/deepflow-results`);
   console.log(
     `   Secret:     ${WEBHOOK_SECRET ? "configured ✅" : "not set ⚠️"}`
   );
   console.log(
-    `   Public URL: ${process.env.PUBLIC_BASE_URL || "not set (DeepFlow forwarding will be dry-run only) ⚠️"}`
+    `   Public URL: ${publicUrl || "not set (DeepFlow forwarding will be dry-run only) ⚠️"}`
   );
   console.log(`\nListening for GitHub webhook events...\n`);
 });
