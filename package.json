@@ -1,0 +1,34 @@
+{
+  "name": "deepflow-webhook-test",
+  "version": "1.0.0",
+  "description": "GitHub webhook test server",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "generate-secret": "node -e \"console.log(require('crypto').randomBytes(32).toString('hex'))\"",
+    "test-lifecycle": "node test-webhook.js lifecycle",
+    "test-ping": "node test-webhook.js ping",
+    "test-push": "node test-webhook.js push",
+    "test-pr-opened": "node test-webhook.js pr-opened",
+    "test-pr-review": "node test-webhook.js pr-review-requested",
+    "test-pr-merged": "node test-webhook.js pr-merged",
+    "test-pr-closed": "node test-webhook.js pr-closed"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/danijelvukovic-servalit/deepflow-webhook-test.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/danijelvukovic-servalit/deepflow-webhook-test/issues"
+  },
+  "homepage": "https://github.com/danijelvukovic-servalit/deepflow-webhook-test#readme",
+  "dependencies": {
+    "dotenv": "^17.4.1",
+    "express": "^5.2.1"
+  }
+}
