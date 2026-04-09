@@ -4,7 +4,7 @@ const path = require("node:path");
 
 const DEEPFLOW_WEBHOOK_URL =
   process.env.DEEPFLOW_WEBHOOK_URL ||
-  "https://api-v2.stg.deepflow.com/api/public/template-webhook/8c625ca2-e2ba-437d-8e44-9222c65c5ebd/e3728f60-6270-483e-b3d9-cc9d95875165";
+  "https://api-v2.stg.deepflow.com/api/public/template-webhook/8c625ca2-e2ba-437d-8e44-9222c65c5ebd/9f2dc4af-2e51-42ca-870f-ae0017cdf971";
 
 const PUBLIC_BASE_URL = process.env.PUBLIC_BASE_URL || "";
 
