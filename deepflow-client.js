@@ -47,8 +47,8 @@ function mapGitHubEventToDeepFlow(event, action, payload) {
       return {
         ...base,
         deepflow_action: "move_to_stage",
-        target_stage: "PR Open",
-        description: `PR #${pr.number} opened for branch "${branchName}" — move ticket to "PR Open"`,
+        target_stage: "In Progress",
+        description: `PR #${pr.number} opened for branch "${branchName}" — move ticket to "In Progress"`,
       };
 
     case "review_requested":
