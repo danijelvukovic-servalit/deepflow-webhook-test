@@ -32,15 +32,25 @@ GitHub PR event
 | Template webhook call | Working (202 Accepted) |
 | DeepFlow agent receives event data | Working |
 | Agent can change task state/assignment | Already supported |
-| Agent can find task cross-workflow by branch | **Needs "search tasks" tool** |
+| Agent can list tasks in its workflow | Already supported |
+| Agent can find task by name (same workflow) | **Works now via task_identifier in name** |
+| Agent can find task cross-workflow | Needs "search tasks" tool (future) |
 
-## The One Remaining Gap: Cross-Workflow Task Search
+## Task Matching Strategy
 
-The DeepFlow agent (workflow template) already has the ability to:
-- Change task state (e.g., "In Progress" → "PR Open" → "Done")
-- Reassign a task to a different user
+The agent can list all tasks in its workflow. To find the right task, the bridge extracts a **task identifier** from the branch name using the pattern `DF-{number}`:
 
-The only missing piece is: given a branch name like `feature/DF-42-user-auth`, find the matching task **across workflows**.
+```
+Branch: "feature/DF-42-user-auth"  →  task_identifier: "DF-42"
+```
+
+The agent then matches `task_identifier` against task names in its workflow (e.g., task named "DF-42 User auth").
+
+**Branch naming convention:** `feature/DF-{id}-description` or `bugfix/DF-{id}-description`
+
+**Known limitation:** Template properties (like a `branch` field) are not persisted when creating a template. Matching by task name is the current workaround. When property persistence is fixed, the agent can match by `branch` property instead of name.
+
+**Cross-workflow search** (Charlie's "search tasks" tool) is only needed if the task lives in a different workflow than the agent. For tasks in the same workflow, the current approach works.
 
 ### What the agent receives
 
@@ -51,9 +61,10 @@ When the agent downloads the JSON from `input_resource_download_urls[0]`, it get
   "source": "github",
   "event": "pull_request",
   "action": "closed",
-  "branch": "feature/DF-99-demo",
+  "branch": "feature/DF-42-user-auth",
+  "task_identifier": "DF-42",
   "pr_number": 3,
-  "pr_title": "feat: demo feature (DF-99)",
+  "pr_title": "feat: user auth flow (DF-42)",
   "pr_url": "https://github.com/org/repo/pull/3",
   "repo": "org/repo",
   "sender": "danijelvukovic-servalit",
@@ -69,8 +80,8 @@ When the agent downloads the JSON from `input_resource_download_urls[0]`, it get
 
 ```
 1. Read the JSON
-2. Extract `branch` field → "feature/DF-99-demo"
-3. SEARCH TASKS where branch property == "feature/DF-99-demo"  ← needs new tool
+2. Extract `task_identifier` field → "DF-42"
+3. List tasks in workflow, find task whose name contains "DF-42"
 4. Based on `deepflow_action`:
    - "move_to_stage" → change task stage to `target_stage` value
    - "reassign"      → reassign task to user from `requested_reviewer` field

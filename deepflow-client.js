@@ -4,7 +4,7 @@ const path = require("node:path");
 
 const DEEPFLOW_WEBHOOK_URL =
   process.env.DEEPFLOW_WEBHOOK_URL ||
-  "https://api-v2.dev.deepflow.ai8.io/api/public/template-webhook/e0d55ecf-44e0-4a54-9817-d496ee1136d1/34677b29-39bc-48c1-b0c5-fb5c94627cd4";
+  "https://api-v2.dev.deepflow.ai8.io/api/public/template-webhook/e0d55ecf-44e0-4a54-9817-d496ee1136d1/db3bad38-f977-4394-849e-9412c8468b86";
 
 const PUBLIC_BASE_URL = process.env.PUBLIC_BASE_URL || "";
 
@@ -22,11 +22,17 @@ function mapGitHubEventToDeepFlow(event, action, payload) {
   const branchName = pr.head?.ref;
   if (!branchName) return null;
 
+  // Extract task identifier from branch name
+  // Supports: feature/DF-42-description, DF-42-foo, bugfix/DF-42, etc.
+  const taskIdMatch = branchName.match(/\b(DF-\d+)\b/i);
+  const taskIdentifier = taskIdMatch ? taskIdMatch[1].toUpperCase() : null;
+
   const base = {
     source: "github",
     event,
     action,
     branch: branchName,
+    task_identifier: taskIdentifier,
     pr_number: pr.number,
     pr_title: pr.title,
     pr_url: pr.html_url,
